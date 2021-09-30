@@ -2,19 +2,19 @@ import protocol Service.ServiceType
 import protocol Service.Container
 
 
-protocol NStackProtocol: ServiceType {
+public protocol NStackProtocol: ServiceType {
     var application: ApplicationProtocol { get set }
 }
 
-class MockNStack: NStackProtocol {
+public class MockNStack: NStackProtocol {
 
-    var application: ApplicationProtocol
+    public var application: ApplicationProtocol
 
-    init(application: ApplicationProtocol) {
+    public init(application: ApplicationProtocol) {
         self.application = application
     }
     
-    static func makeService(for container: Container) throws -> Self {
+    public static func makeService(for container: Container) throws -> Self {
         fatalError()
     }
 
