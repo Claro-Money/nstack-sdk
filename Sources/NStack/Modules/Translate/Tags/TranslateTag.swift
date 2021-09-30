@@ -39,6 +39,8 @@ public final class TranslateTag: TagRenderer {
 
         let translationFuture = self.nstack.application.translate.get(
             on: tag.container,
+            platform: nil,
+            language: nil,
             section: section,
             key: key,
             searchReplacePairs: searchReplacePairs

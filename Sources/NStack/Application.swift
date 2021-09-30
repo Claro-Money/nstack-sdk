@@ -1,6 +1,7 @@
 import Vapor
 
-public struct Application {
+
+public struct Application: ApplicationProtocol {
 
     var connectionManager: ConnectionManager
     let config: NStack.Config
@@ -13,8 +14,8 @@ public struct Application {
 
     var cache: KeyedCache { return connectionManager.cache }
 
-    public private(set) lazy var response = ResponseController(application: self)
-    public private(set) lazy var translate: TranslateController = TranslateController(
+    public private(set) lazy var response: ResponseControllerProtocol = ResponseController(application: self)
+    public private(set) lazy var translate: TranslateControllerProtocol = TranslateController(
         application: self,
         config: self.translateConfig ?? Translate.Config.default
     )

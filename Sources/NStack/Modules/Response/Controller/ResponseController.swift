@@ -1,6 +1,12 @@
 import Vapor
 
-public final class ResponseController {
+
+public protocol ResponseControllerProtocol {
+    subscript(_ id: Int) -> Future<Response> { get }
+    subscript<T: Decodable>(_ id: Int) -> Future<T> { get }
+}
+
+public final class ResponseController: ResponseControllerProtocol {
 
     private let application: Application
 

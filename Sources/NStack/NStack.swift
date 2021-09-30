@@ -4,9 +4,9 @@ import HTTP
 
 public typealias Translate = TranslateController
 
-public final class NStack {
+public final class NStack: NStackProtocol {
 
-    public var application: Application
+    public var application: ApplicationProtocol
 
     let connectionManager: ConnectionManager
     let config: NStack.Config

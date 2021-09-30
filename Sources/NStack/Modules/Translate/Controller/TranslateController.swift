@@ -1,8 +1,50 @@
 import Vapor
 import Foundation
 
-public final class TranslateController {
 
+public protocol TranslateControllerProtocol {
+    
+    func get(
+        on worker: Container,
+        platform: TranslateController.Platform?,
+        language: String?,
+        section: String,
+        key: String,
+        searchReplacePairs: [String: String]?
+    ) -> Future<String>
+    
+    func get(
+        on worker: Container,
+        section: String,
+        key: String
+    ) -> Future<String>
+    
+    func get(
+        on worker: Container,
+        section: String
+    ) -> Future<[String: String]>
+    
+    func get(
+        on worker: Container,
+        platform: TranslateController.Platform?,
+        language: String?,
+        section: String
+    ) -> Future<[String: String]>
+    
+    func preloadLocalization(
+        on worker: Container
+    ) throws -> Future<Void>
+    
+    func preloadLocalization(
+        on worker: Container,
+        platform: TranslateController.Platform?,
+        language: String?
+    ) throws -> Future<Void>
+    
+}
+
+public final class TranslateController: TranslateControllerProtocol {
+    
     let application: Application
     let config: Translate.Config
     var localizations: [String: Localization] = [:]
@@ -19,6 +61,10 @@ public final class TranslateController {
         self.config = config
     }
 
+    public func get(on worker: Container, section: String, key: String) -> EventLoopFuture<String> {
+        get(on: worker, platform: nil, language: nil, section: section, key: key, searchReplacePairs: nil)
+    }
+    
     public final func get(
         on worker: Container,
         platform: Platform? = nil,
@@ -61,6 +107,13 @@ public final class TranslateController {
             return worker.future(Localization.fallback(section: section, key: key))
         }
     }
+    
+    public final func get(
+        on worker: Container,
+        section: String
+    ) -> Future<[String: String]> {
+        get(on: worker, platform: nil, language: nil, section: section)
+    }
 
     public final func get(
         on worker: Container,
@@ -92,7 +145,7 @@ public final class TranslateController {
         }
     }
 
-    final func preloadLocalization(
+    public final func preloadLocalization(
         on worker: Container,
         platform: Platform? = nil,
         language: String? = nil
@@ -104,6 +157,10 @@ public final class TranslateController {
         return try fetchLocalization(on: worker, platform: platform, language: language).transform(to: ())
     }
     
+    public func preloadLocalization(on worker: Container) throws -> EventLoopFuture<Void> {
+        try preloadLocalization(on: worker, platform: nil, language: nil)
+    }
+
     private final func fetchLocalization(
         on worker: Container,
         platform: Platform,

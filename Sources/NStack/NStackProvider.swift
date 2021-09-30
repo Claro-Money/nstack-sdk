@@ -2,9 +2,11 @@ import Vapor
 import Leaf
 
 public final class NStackProvider {
+    
+    typealias CacheFactory = ((Container) throws -> KeyedCache)
 
     let config: NStack.Config
-    let cacheFactory: ((Container) throws -> KeyedCache)
+    let cacheFactory: CacheFactory
     
     public init(
         config: NStack.Config,
@@ -21,13 +23,7 @@ extension NStackProvider: Provider {
         try services.register(LeafProvider())
         services.register(config)
         services.register(NStackLogger.self)
-        services.register { container -> NStack in
-            
-            return try NStack(
-                on: container,
-                cacheFactory: self.cacheFactory
-            )
-        }
+        services.register(NStackFactory(cacheFactory: cacheFactory))
         services.register(NStackPreloadMiddleware.self)
     }
 
